@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5, user-scalable=no">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="full-screen" content="yes">
+
+    <title>Bid</title>
+    <link rel="stylesheet" href="lib/bootstrap-4.0.0-dist/css/bootstrap.min.css">
+    <style>
+        .bg {
+            background: linear-gradient(to right, #fff1eb 0%, #ace0f9 100%);
+            height: 1500px;
+        }
+        .intro {
+            position: : absolute;
+            top: 45%;
+            width: 60%
+            margin: 0 auto;
+            position: relative;
+            height: 100%;
+            padding-top: 50px;
+        }
+        .board-box {
+            width: 60%;
+            margin: 0px auto;
+        }
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+
+        }
+
+         .form-inline {
+            display: inline-block;
+            width: auto;
+            vertical-align: middle;
+            margin: auto;
+        }
+
+        .noExtension {
+            height: 100px;
+            margin: auto;
+            font-size: 23px;
+        }
+
+        #search_value {
+            width: 80%;
+            height: 50px;
+            box-shadow: 3px 5px grey, 1px 1px #333;
+        }
+
+        .search button {
+            width: 18%;
+            height: 50px;
+            margin-left: 6px;
+            box-shadow: 3px 5px grey, 1px 1px #333;
+        }
+
+        button {
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        @keyframes rotate {
+            0% { transform:rotateY(0deg);}
+            25% { transform:rotateY(180deg);}
+            50% { transform:rotateY(0deg);}
+            75% { transform:rotateY(180deg);}
+            100% { transform:rotateY(0deg);}
+        }
+
+        .result_success {
+            font-size: 18px
+        }
+
+        .result_faile{
+            font-size: 22px
+        }
+
+        .add_banner{
+            width: 80%;
+            margin: auto;
+        }
+
+        .add_banner input{
+            width: 80%;
+            height: 50px;
+            box-shadow: 3px 5px grey, 1px 1px #333;
+        }
+
+        .add_banner button{
+            width: 18%;
+            height: 50px;
+            margin-left: 6px;
+            box-shadow: 3px 5px grey, 1px 1px #333;
+        }
+
+        #search_banner{
+            font-size: 50px;
+            border-bottom: 1px solid black;
+        }
+
+        p{
+            font-size: 18px;
+        }
+
+        .description{
+            font-size: 18px;
+        }
+
+        .hide{
+            display: none;
+        }
+
+        .contenner{
+            background: url("img/bg.jpg");
+            height: 1500px;
+        }
+
+        table {
+            border-spacing: 0;
+            width: 100%;
+            border: 1px solid #ddd;
+        }
+        th, td {
+            text-align: left;
+            padding: 16px;
+            white-space: nowrap;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2
+        }
+
+        footer {
+            margin-top: -70px;
+        }
+    </style>
+</head>
+
+<body>
+<div class = "bg">
+    <div class = "board-box">
+        <div class="intro">
+            <h1>Easy Auction</h1>
+            <p>Easy Auction allows you to run auctions on the Nebulas Blockchain. Bids can be viewed by anyone with the unique auction name. Actual payments are not supported at this time.</p>
+        </div>
+        <div class="noExtension hide" id="noExtension">
+            NOTE: Please install <a target="_blank" href="https://github.com/ChengOrangeJu/WebExtensionWallet">WebExtensionWallet</a>  to use Easy Auction
+        </div>
+        <div class="form-inline">
+        <h3>Create Auction</h3>
+        	Unique Auction Name
+            <br>
+            <input id="create_bid" type="text" class="form-control">
+            <p></p>
+            Auction Description
+            <br>
+            <textarea rows="4" cols="50" id="auction_description" type="text" class="form-control"></textarea>
+            <p></p>
+            Miniumum Bid
+            <br>
+            <input id="minimum_bid" type="number" class="form-control">
+            <p></p>
+            End Date
+            <br>
+            <input id="auction_end" type="datetime-local" class="form-control">
+            <p></p>
+            <button id=create>Submit</button>
+        </div>
+        <br>
+        <br>
+        <div class="form-inline">
+            <h3>Place Bid</h3>
+            Auction Name
+            <br>
+            <input id="auction_name" type="text" class="form-control">
+            <p></p>
+            Bid Amount (NAS)
+            <br>
+            <input id="bid_amount" type="number" class="form-control">
+            <p></p>
+            <button id=bid>Submit</button>
+        </div>
+        <p></p>
+        <div class="form-inline">
+            <h3>Find Bid</h3>
+            <input id="find_bid" type="text" class="form-control">
+            <p></p>
+            <button id=search>Search</button>
+        </div>
+            
+
+        <div class="result_success hide">
+            <div id=search_banner></div>
+            <p id=search_result class="description"> wait for content </p>
+            <div class="owner">
+                <b><p> Owner:</b> <span id=search_result_owner></span></p>
+            </div>
+            <div class="min_bid_return">
+                <b><p> Minium Bid: </b><span id=search_result_min_bid></span></p>
+            </div>   
+            <div class="end_time">
+                <b><p> Ends at:</b> <span id=search_result_end_time></span></p>
+            </div>
+            <div id=table>
+                <table id = myTable>
+                    <tr>
+                        <th id = header1>
+                            <b>Bidder</b>
+                        </th>
+                        <th id = header2>
+                            <b>Amount</b>
+                        </th>
+                        <th id = header3>
+                            <b>Submission Time</b>
+                        </th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="result_faile hide">
+            No auction found for "<i id="result_faile_add">asd</i>". Try again.
+        </div>
+    </div>
+</div>
+<script src=lib/jquery-3.3.1.min.js></script>
+<script src=lib/nebPay.js></script>
+<script src=lib/bootstrap-4.0.0-dist/js/bootstrap.min.js></script>
+<script src=lib/nebulas.js></script>
+<script>
+
+    "use strict";
+
+
+    $("#search_value").attr("disabled",true)
+    $("#search").attr("disabled",true)
+    //to check if the extension is installed
+    //if the extension is installed, var "webExtensionWallet" will be injected in to web page
+    if(typeof(webExtensionWallet) === "undefined"){
+        //alert ("Extension wallet is not installed, please install it first.")
+        $("#noExtension").removeClass("hide")
+    }else{
+        $("#search_value").attr("disabled",false)
+        $("#search").attr("disabled",false)
+    }
+
+    var dappAddress = "n1kn4eguDkZqtAnAN3NPKer9Hx72iofGv1b";
+
+    var nebulas = require("nebulas"),
+        Account = nebulas.Account,
+        neb = new nebulas.Neb();
+    neb.setRequest(new nebulas.HttpRequest("https://mainnet.nebulas.io"));
+    //neb.setRequest(new nebulas.HttpRequest("http://localhost:8685"));
+
+    $("#search").click(function(){
+        var from = Account.NewAccount().getAddressString();
+
+        var value = "0";
+        var nonce = "0"
+        var gas_price = "1000000"
+        var gas_limit = "2000000"
+        var callFunction = "get";
+        var callArgs = "[\"" + $("#find_bid").val() + "\"]"; //in the form of ["args"]
+        var contract = {
+            "function": callFunction,
+            "args": callArgs
+        }
+        
+
+        //Call get
+        neb.api.call(from,dappAddress,value,nonce,gas_price,gas_limit,contract).then(function (resp) {
+            cbSearch(resp)
+        }).catch(function (err) {
+            //cbSearch(err)
+            console.log("error:" + err.message)
+        })
+
+    })
+
+   //return of search,
+    function cbSearch(resp) {
+        var result = resp.result;  //resp is an object
+
+        if (result === 'null'){
+            $(".add_banner").addClass("hide");
+            $(".result_success").addClass("hide");
+
+            $("#result_faile_add").text($("#find_bid").val())
+
+            $(".result_faile").removeClass("hide");
+        } else{
+            //if result is not null, then it should be "return value" or "error message"
+            try{
+                result = JSON.parse(result);
+                var bids = result.bids;
+            }catch (err){
+                //result is the error message
+            }
+
+            //if (!!result.key){   
+            if (!!result){    //"return value"
+                $(".add_banner").addClass("hide");
+                $(".result_faile").addClass("hide");
+
+                $("#search_banner").text($("#find_bid").val());
+                $('#search_result_owner').text(result.owner);
+                $('#search_result').text(result.description);
+                $("#search_result_end_time").text(new Date(result.endMoment));
+                $("#search_result_min_bid").text(result.minBid);
+                $(".result_success").removeClass("hide");
+
+                // Find a <table> element with id="myTable":
+                //var borderStyle = "1px solid red";
+                var table = document.getElementById("myTable");
+                    //table.style.border = borderStyle;
+                var header2 = document.getElementById("header2");
+                    header2.onclick = function(){sortTable(1)};
+                var header3 = document.getElementById("header3");
+                    header3.onclick = function(){sortTable(2)};
+
+                //var tableBody = document.getElementById("myTableBody")
+
+                var i;
+                for (i = 0; i < bids.length; i++) {
+                    var row = document.createElement('TR');
+                    table.appendChild(row);
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    var cell3 = row.insertCell(2);
+                    cell1.innerHTML = bids[i].bidder;
+                    cell2.innerHTML = bids[i].amount;
+                    cell3.innerHTML = new Date(bids[i].submissionTime);
+                }
+
+            } else {        //"error message"
+                $(".add_banner").addClass("hide");
+                $(".result_faile").addClass("hide");
+
+                $("#search_banner").text($("#find_bid").val())
+                $("#search_result").text(result)
+                $("#search_result").text("")
+                $("#search_result_owner").text("")
+                $("#search_result_end_time").text("")
+
+                $(".result_success").removeClass("hide");
+            }
+
+        }
+
+    }
+
+function sortTable(n) {
+    console.log("click test")
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  //table = document.getElementById("myTable");
+  var tableBody = document.getElementById("myTable");
+  switching = true;
+  // Set the sorting direction to ascending:
+  dir = "asc"; 
+  /* Make a loop that will continue until
+  no switching has been done: */
+  while (switching) {
+    // Start by saying: no switching is done:
+    switching = false;
+    //rows = table.getElementsByTagName("TR");
+    rows = tableBody.getElementsByTagName("TR");
+    /* Loop through all table rows (except the
+    first, which contains table headers): */
+    for (i = 1; i < (rows.length - 1); i++) {
+      // Start by saying there should be no switching:
+      shouldSwitch = false;
+      /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+      if (dir == "asc") {
+        if (x.innerHTML > y.innerHTML) {
+            console.log("inner x html: " + x.innerHTML);
+            console.log("inner y html: " + y.innerHTML);
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML < y.innerHTML) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchcount ++; 
+    } else {
+      /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+
+    var NebPay = require("nebpay");     //https://github.com/nebulasio/nebPay
+    var nebPay = new NebPay();
+    var serialNumber
+
+    $("#create").click(function() {
+
+        var to = dappAddress;
+        var value = "0";
+        var callFunction = "create"
+        var auctionEnd = new Date($("#auction_end").val());
+
+        var callArgs = "[\"" + $("#create_bid").val() + "\",\"" + $("#auction_description").val() + "\",\"" + auctionEnd + "\",\"" + $("#minimum_bid").val() + "\"]"
+
+        serialNumber = nebPay.call(to, value, callFunction, callArgs, {    //使用nebpay的call接口去调用合约,
+            listener: cbPush        //设置listener, 处理交易返回信息
+        });
+
+        intervalQuery = setInterval(function () {
+            funcIntervalQuery();
+        }, 5000);
+    });
+
+    $("#bid").click(function() {
+
+        var to = dappAddress;
+        var value = "0";
+        var callFunction = "bid"
+        var callArgs = "[\"" + $("#auction_name").val() + "\",\"" + $("#bid_amount").val() + "\"]"
+
+        serialNumber = nebPay.call(to, value, callFunction, callArgs, {    //使用nebpay的call接口去调用合约,
+            listener: cbPush        //设置listener, 处理交易返回信息
+        });
+
+        intervalQuery = setInterval(function () {
+            funcIntervalQuery();
+        }, 5000);
+    });
+
+    var intervalQuery
+
+    function funcIntervalQuery() {
+        nebPay.queryPayInfo(serialNumber)   //search transaction result from server (result upload to server by app)
+            .then(function (resp) {
+                console.log("tx result: " + resp)   //resp is a JSON string
+                var respObject = JSON.parse(resp)
+                if(respObject.code === 0){
+                    alert(`set ${$("#find_bid").val()} succeed!`)
+                    clearInterval(intervalQuery)
+                }
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    }
+
+    function cbPush(resp) {
+        console.log("response of push: " + JSON.stringify(resp))
+    }
+
+</script>
+</body>
+
+</html>
